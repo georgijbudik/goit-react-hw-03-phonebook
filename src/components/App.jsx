@@ -10,6 +10,8 @@ export class App extends Component {
     filter: '',
   };
 
+  LS_KEY = 'contacts';
+
   addContact = (name, number) => {
     const { contacts } = this.state;
     const contact = {
@@ -45,6 +47,20 @@ export class App extends Component {
       contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts.length !== contacts.length) {
+      localStorage.setItem(this.LS_KEY, JSON.stringify(contacts));
+    }
+  }
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(this.LS_KEY);
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
   render() {
     const { filter } = this.state;
     const filteredContacts = this.getFilteredContacts();
